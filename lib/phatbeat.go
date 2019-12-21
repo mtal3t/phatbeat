@@ -163,6 +163,15 @@ func handleButton(pin *gpio.Pin) {
 // Hold .
 func Hold(b int, repeat bool, holdTime int, handler func(int)) {
 
+	/*
+			Register a button hold handler.
+
+		    :param button: Individual pin or to watch
+		    :param handler: handler function
+		    :param repeat: Whether the handler should be repeated if the button is held
+			:param hold_time: How long (in seconds) the button should be held before triggering
+	*/
+
 	log.Println("handling hold")
 
 	buttonHoldRepeat[b] = repeat
@@ -176,6 +185,14 @@ func Hold(b int, repeat bool, holdTime int, handler func(int)) {
 // On .
 func On(button int, repeat bool, handle func(int)) {
 
+	/*
+			Attach a handler function a button.
+
+		    :param button: Individual button pin to watch
+		    :param handler: Optional handler function
+		    :param repeat: Whether the handler should be repeated if the button is held
+	*/
+
 	log.Println("handling On")
 	buttonRepeat[button] = repeat
 
@@ -187,6 +204,12 @@ func On(button int, repeat bool, handle func(int)) {
 
 // SetBrightness .
 func SetBrightness(brightness float32, channel *uint8) {
+
+	/*
+		Set the brightness of all pixels.
+
+		:param brightness: Brightness: 0.0 to 1.0
+	*/
 
 	if brightness < 0 || brightness > 1 {
 		log.Println("Brightness should be between 0.0 and 1.0")
@@ -282,21 +305,45 @@ func Show() {
 // SetAll .
 func SetAll(r uint8, g uint8, b uint8, brightness *float32, channel *int) {
 
+	/*
+			Set the RGB value and optionally brightness of all pixels
+			If you don't supply a brightness value, the last value set for each pixel be kept.
+
+		    :param r: Amount of red: 0 to 255
+		    :param g: Amount of green: 0 to 255
+		    :param b: Amount of blue: 0 to 255
+		    :param brightness: Brightness: 0.0 to 1.0 (default around 0.2)
+		    :param channel: Optionally specify which bar to set: 0 or 1
+	*/
+
 	if channel == nil || *channel == 0 {
 		for i := 0; i < ChannelPixels; i++ {
-			setPixel(uint8(i), r, g, b, brightness, nil)
+			SetPixel(uint8(i), r, g, b, brightness, nil)
 		}
 
 	}
 
 	if channel == nil || *channel == 1 {
 		for i := uint8(0); i < ChannelPixels; i++ {
-			setPixel(i+ChannelPixels, r, g, b, brightness, nil)
+			SetPixel(i+ChannelPixels, r, g, b, brightness, nil)
 		}
 	}
 }
 
-func setPixel(x uint8, r uint8, g uint8, b uint8, brightness *float32, channel *int) {
+// SetPixel .
+func SetPixel(x uint8, r uint8, g uint8, b uint8, brightness *float32, channel *int) {
+
+	/*
+			Set the RGB value, and optionally brightness, of a single pixel
+			If you don't supply a brightness value, the last value will be kept.
+
+		    :param x: The horizontal position of the pixel: 0 to 7
+		    :param r: Amount of red: 0 to 255
+		    :param g: Amount of green: 0 to 255
+		    :param b: Amount of blue: 0 to 255
+		    :param brightness: Brightness: 0.0 to 1.0 (default around 0.2)
+		    :param channel: Optionally specify which bar to set: 0 or 1
+	*/
 
 	var br uint8
 	if brightness == nil {
